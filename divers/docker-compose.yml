@@ -1,0 +1,35 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:5.0.9
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodata:/data/db
+
+  parse:
+    image: parseplatform/parse-server:5.2.4
+    ports:
+      - 1337:1337
+    links:
+      - mongo
+    environment:
+      - PARSE_SERVER_APPLICATION_ID=cours_angular
+      - PARSE_SERVER_MASTER_KEY=cours_angular_master_key
+      - PARSE_SERVER_DATABASE_URI=mongodb://mongo:27017/cours_angular
+
+  dashboard:
+    image: parseplatform/parse-dashboard:4.1.4
+    ports:
+      - 4040:4040
+    environment:
+      - PARSE_DASHBOARD_SERVER_URL=http://localhost:1337/parse
+      - PARSE_DASHBOARD_APP_ID=cours_angular
+      - PARSE_DASHBOARD_MASTER_KEY=cours_angular_master_key
+      - PARSE_DASHBOARD_APP_NAME=Cours Angular
+      - PARSE_DASHBOARD_ALLOW_INSECURE_HTTP=1
+      - PARSE_DASHBOARD_USER_ID=admin
+      - PARSE_DASHBOARD_USER_PASSWORD=admin
+
+volumes:
+  mongodata:
