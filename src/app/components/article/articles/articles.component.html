@@ -1,0 +1,5 @@
+<div class="list-articles">
+    @for (article of listArticles; track article.nom){
+        <app-article [data]="article"></app-article>
+    }
+</div>

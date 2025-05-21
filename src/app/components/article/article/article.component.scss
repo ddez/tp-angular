@@ -1,0 +1,13 @@
+.article {
+    display: flex;
+    gap: 10px;
+    width: 200px;
+
+    border-style: double;
+    border-width: thick;
+    padding: 5px
+}
+
+.bouteille {
+    max-height: 200px;
+}
