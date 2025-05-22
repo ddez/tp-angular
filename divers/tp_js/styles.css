@@ -15,8 +15,13 @@
 
 .right-menu { grid-area: right-menu; }
 
-.header { grid-area: header; }
+.header {
+  grid-area: header;
+}
 
 .footer { grid-area: footer; }
 
-.main { grid-area: main; }
+.main {
+  grid-area: main;
+  padding: 3rem;
+}

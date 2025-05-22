@@ -9,17 +9,6 @@ const LS_USER_DATA_KEY = 'userData';
 let userData;
 
 /**
- * Log l'utilisateur lorsqu'il n'ets pas connecté, sinon le déconnecte
- */
-function toggleLogin() {
-    if (userData) {
-        logout();
-    } else {
-        login();
-    }
-}
-
-/**
  * Permet d'appeler le backend
  * @param {*} endPoint Endpoint appelé
  * @param {*} body Body de la requete
@@ -31,7 +20,7 @@ async function callBackend(endPoint, body) {
     headers: {
         "Content-Type": "application/json",
         "X-Parse-Application-Id": "cours_angular",
-        "X-Parse-Session-Token": userData?.sesionToken
+        "X-Parse-Session-Token": userData?.sessionToken
     },
     body: JSON.stringify(body),
     });
@@ -43,7 +32,18 @@ async function callBackend(endPoint, body) {
  * Identifie un utilisateur auprès du backend
  */
 async function login() {
-    userData = await callBackend('login', {username:"bob",password:"bob"});
+    const username = document.querySelector('#login').value;
+    const password = document.querySelector('#pass').value;
+
+    // Appel au backend
+    userData = await callBackend('login', {username:username,password:password});
+    
+    // Gestion d'erreur
+    if (!userData?.username) {
+        alert('Identifiant ou mot de passe inconnu !');
+        return;
+    }
+    
     localStorage.setItem(LS_USER_DATA_KEY, JSON.stringify(userData));
     displayUser();
 }
@@ -51,7 +51,7 @@ async function login() {
 /**
  * Déconnecte un utilisateur
  */
-async function logout(arg1) {
+async function logout() {
     await callBackend('logout');
 
     userData = undefined;
@@ -65,11 +65,15 @@ async function logout(arg1) {
  */
 function displayUser() {
     if (userData) {
+        // Utilisateur connecté
         document.querySelector('#userName').innerHTML = userData.username;
-        document.querySelector('#loginButton').innerHTML = 'Se deconnecter';
+        document.querySelector('#login-form').style.display = 'none';
+        document.querySelector('#logoutButton').style.display = 'block';
     } else {
+        // Aucun utilisateur connecté
         document.querySelector('#userName').innerHTML = '--';
-        document.querySelector('#loginButton').innerHTML = 'Se connecter';
+        document.querySelector('#login-form').style.display = 'block';
+        document.querySelector('#logoutButton').style.display = 'none';
     }
 }
 
@@ -77,7 +81,7 @@ function displayUser() {
  * Initialisation de l'application
  */
 function init() {
-    userData = JSON.parse(localStorage.getItem('userData'));
+    userData = JSON.parse(localStorage.getItem(LS_USER_DATA_KEY));
     displayUser();
 }
 
